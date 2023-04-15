@@ -54,9 +54,9 @@ public class Startup
         dataContext.Database.Migrate();
         app.UseHttpsRedirection();
 
-        app.UseCors("AllowAll");
-
         app.UseRouting();
+
+        app.UseCors("AllowAll");
 
         app.UseAuthorization();
 

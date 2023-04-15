@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -44,7 +45,7 @@ public class CategoryController : ControllerBase
 
         if (result == null)
             return NotFound();
-        var finalResult = _mapper.Map<IList<Category>, IList<CategoryShortDto>>(result);
+        var finalResult = _mapper.Map<Category, CategoryShortDto>(result.First());
         return Ok(finalResult);
     }
 
@@ -63,6 +64,15 @@ public class CategoryController : ControllerBase
         var result = await _mediator.Send((new CreateProductRequest(product, id)));
         if (result == null) return BadRequest();
         return Ok(_mapper.Map<Product, ProductShortDto>(result));
+    }
+
+    [HttpDelete("categories/products/{id:long}")]
+    public async Task<IActionResult> DeleteProduct(long id)
+    {
+        var result = await _mediator.Send(new DeleteProductRequest(id));
+        if (!result)
+            return NotFound();
+        return Ok();
     }
 
     [HttpGet("categories/search")]
