@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UtmShop.Api.DAL;
-using UtmShop.Api.Model;
+using UtmShop.Models;
 
 namespace UtmShop.Api.Requests;
 

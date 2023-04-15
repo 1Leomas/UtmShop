@@ -1,4 +1,4 @@
-﻿namespace UtmShop.Api.Model;
+﻿namespace UtmShop.Models;
 
 public class Product
 {

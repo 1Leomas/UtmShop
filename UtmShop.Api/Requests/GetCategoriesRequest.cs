@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UtmShop.Api.DAL;
-using UtmShop.Api.Model;
 
 namespace UtmShop.Api.Requests;
 
@@ -37,6 +36,7 @@ public class GetCategoriesRequest: IRequest<List<Category>>
             {
                 if (!request.SpecificCategory.HasValue)
                     return Task.FromResult(_context.Categories.Include(x=>x.Products).ToList());
+
                 return Task.FromResult(_context.Categories.Include(x => x.Products).Where(category => category.Id == request.SpecificCategory).ToList());
             }
             catch(Exception ex)

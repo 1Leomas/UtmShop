@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using UtmShop.Api.DAL;
-using UtmShop.Api.Model;
 
 namespace UtmShop.Api.Requests;
 

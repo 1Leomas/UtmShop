@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using UtmShop.Api.Model;
+using UtmShop.Models;
 
 namespace UtmShop.Api.Dto.Profiles;
 

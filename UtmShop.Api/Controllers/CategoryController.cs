@@ -5,8 +5,8 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UtmShop.Api.Dto;
-using UtmShop.Api.Model;
 using UtmShop.Api.Requests;
+using UtmShop.Models;
 
 namespace UtmShop.Api.Controllers;
 

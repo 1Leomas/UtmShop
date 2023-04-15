@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace UtmShop.Api.Model;
+﻿using UtmShop.Models;
 
 public class Category
 {

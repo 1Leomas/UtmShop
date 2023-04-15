@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UtmShop.Api.Model;
+using UtmShop.Models;
 
 namespace UtmShop.Api.DAL;
 
