@@ -11,30 +11,91 @@ else
 {
     <table class="table">
         <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-        </tr>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-            @foreach (var category in categories)
-            {
-                <tr>
-                    <td>@category.Id</td>
-                    <td>@category.Title</td>
-                </tr>
-            }
+        @foreach (var category in categories)
+        {
+            <tr @onclick="@(async () => await CategoryClicked(category.Id))">
+                <td>@category.Id</td>
+                <td>@category.Title</td>
+                <td class="text-center">
+                    <button class="btn btn-dark"
+                            @onclick="@(async () => await DeleteCategory(category.Id))"
+                            @onclick:preventDefault="true"
+                            @onclick:stopPropagation="true">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+            <tr id="addRow">
+                <td></td>
+                <td>
+                    <input @bind="newCategoryTitle" placeholder="New Category" />
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-secondary" @onclick="AddCategory">
+                        Add
+                    </button>
+                </td>
+            </tr>
         </tbody>
     </table>
+
+    if (selectedProductId != 0)
+    {
+        <CategoryProducts CategoryId="selectedProductId"></CategoryProducts>
+    }
 }
 
 
 @code {
+    private const string categoriesEndPoint = "api/Category/categories";
     private List<Category> categories;
+    private string? newCategoryTitle;
+
+    private long selectedProductId = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        categories = await Http.GetFromJsonAsync<List<Category>>("api/Category/categories");
+        await GetCategories();
+    }
+    private async Task GetCategories() =>
+        categories = await Http.GetFromJsonAsync<List<Category>>(categoriesEndPoint);
+
+    private async Task AddCategory()
+    {
+        var addCategory = new Category { Title = newCategoryTitle };
+
+        await Http.PostAsJsonAsync(categoriesEndPoint, addCategory);
+
+        newCategoryTitle = string.Empty;
+
+        await GetCategories();
     }
 
+    private async Task DeleteCategory(long id)
+    {
+        if (selectedProductId == id) selectedProductId = 0;
+
+        await Http.DeleteAsync($"{categoriesEndPoint}/{id}");
+        await GetCategories();
+    }
+
+    private async Task CategoryClicked(long id)
+    {
+        if (selectedProductId == id)
+            selectedProductId = 0;
+        else
+        {
+            selectedProductId = 0;
+            await Task.Delay(1);
+            selectedProductId = id;
+        }
+    }
 }

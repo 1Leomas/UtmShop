@@ -1,0 +1,107 @@
+﻿@inject HttpClient Http
+
+@if (category is not null)
+{
+    <h3>@category.Title</h3>
+
+    @if (products is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table w-100 d-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Title</td>
+                    <td>@product.Price</td>
+                    <td class="text-center">
+                        <button class="btn btn-dark"
+                                @onclick="@(async () => await DeleteProduct(product.Id))">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+            <tr class="text-center" id="addRow">
+                <td>
+                    <input @bind="newProductTitle" placeholder="Title" />
+                </td>
+                <td>
+                    <input @bind="newProductPrice" placeholder="Price" />
+                </td>
+                <td class="text-center" colspan="3">
+                    <button class="btn btn-secondary text-center text-light"
+                            @onclick="ClickAddProduct">
+                        Add
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter]
+    public long CategoryId { get; set; }
+    private const string categoryEndPoint = "/api/Category/categories";
+
+    private Category category;
+    private List<Product> products;
+
+    private string newProductTitle;
+    private string newProductPrice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategory();
+    }
+
+    private async Task GetCategory()
+    {
+        category = await Http
+            .GetFromJsonAsync<Category>($"{categoryEndPoint}/{CategoryId}");
+        await GetProducts();
+    }
+
+    private async Task GetProducts()
+    {
+        products = await Http
+            .GetFromJsonAsync<List<Product>>($"{categoryEndPoint}/{CategoryId}/products");
+    }
+
+    private async Task ClickAddProduct()
+    {
+
+        if (   !string.IsNullOrWhiteSpace(newProductTitle)
+            && !string.IsNullOrWhiteSpace(newProductPrice))
+        {
+            var product = new Product
+            {
+                Title = newProductTitle,
+                Price = decimal.Parse(newProductPrice)
+            };
+
+            await Http.PostAsJsonAsync($"{categoryEndPoint}/{CategoryId}/products", product);
+
+            await GetProducts();
+        }
+    }
+
+    private async Task DeleteProduct(long id)
+    {
+        await Http.DeleteAsync($"{categoryEndPoint}/products/{id}");
+        await GetProducts();
+    }
+}
+    
