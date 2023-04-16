@@ -5,9 +5,9 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtmShop.Api", "UtmShop.Api\UtmShop.Api.csproj", "{2C72F165-3FDA-4500-B510-02D9E1EC0E35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtmShop.Blazor", "UtmShop.Blazor\UtmShop.Blazor.csproj", "{967A499A-89F0-4152-9D7A-93438C6428D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtmShop.Blazor", "UtmShop.Blazor\UtmShop.Blazor.csproj", "{967A499A-89F0-4152-9D7A-93438C6428D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtmShop.Models", "UtmShop.Models\UtmShop.Models.csproj", "{DC176561-0BD4-41E5-B865-D2B1468AA003}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtmShop.Models", "UtmShop.Models\UtmShop.Models.csproj", "{DC176561-0BD4-41E5-B865-D2B1468AA003}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
