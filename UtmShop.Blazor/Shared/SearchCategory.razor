@@ -1,0 +1,44 @@
+﻿@inject HttpClient Http
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="input-group">
+                <input @bind="inputSearch" type="text" class="form-control" placeholder="Search...">
+                <button @onclick="SearchCategories" class="btn btn-secondary" type="button">
+                    Search
+                </button>
+                <button @onclick="Reset" class="btn btn-dark" type="button">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<List<long>> Search { get; set; }
+
+    private string? inputSearch = string.Empty;
+    private List<long>? searchResult;
+
+    private const string searchEndPoint = "/api/Category/categories/search?categoryName=";
+
+    private async Task SearchCategories()
+    {
+        searchResult = await Http.GetFromJsonAsync<List<long>?>($"{searchEndPoint}{inputSearch}");
+
+        Console.WriteLine(searchResult?.Count);
+
+        await Search.InvokeAsync(searchResult);
+    }
+
+    private async void Reset()
+    {
+        inputSearch = string.Empty;
+        await Search.InvokeAsync(new List<long>());
+    }
+
+}

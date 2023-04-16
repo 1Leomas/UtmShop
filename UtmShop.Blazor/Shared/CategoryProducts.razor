@@ -2,7 +2,7 @@
 
 @if (category is not null)
 {
-    <h3>@category.Title</h3>
+    <h3>@category.Title category products</h3>
 
     @if (products is null)
     {
@@ -26,21 +26,21 @@
                     <td>@product.Price</td>
                     <td class="text-center">
                         <button class="btn btn-dark"
-                                @onclick="@(async () => await DeleteProduct(product.Id))">
+                            @onclick="@(async () => await DeleteProduct(product.Id))">
                             Delete
                         </button>
                     </td>
                 </tr>
             }
-            <tr class="text-center" id="addRow">
+            <tr id="addRow">
                 <td>
-                    <input @bind="newProductTitle" placeholder="Title" />
+                    <input class="form-control w-50" @bind="newProductTitle" placeholder="Title" />
                 </td>
                 <td>
-                    <input @bind="newProductPrice" placeholder="Price" />
+                    <input class="form-control w-50" @bind="newProductPrice" placeholder="Price" />
                 </td>
-                <td class="text-center" colspan="3">
-                    <button class="btn btn-secondary text-center text-light"
+                <td class="text-center" >
+                    <button class="btn btn-secondary text-light"
                             @onclick="ClickAddProduct">
                         Add
                     </button>

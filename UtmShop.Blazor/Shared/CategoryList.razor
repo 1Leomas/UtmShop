@@ -1,7 +1,13 @@
-﻿@page "/categories"
-@inject HttpClient Http
+﻿@inject HttpClient Http
 
-<h3>List of Categories</h3>
+<div class="row mt-5">
+    <div class="col">
+        <h3>Categories</h3>
+    </div>
+    <div class="col">
+        <SearchCategory Search="SearchCategories"></SearchCategory>
+    </div>
+</div>
 
 @if (categories == null)
 {
@@ -9,10 +15,10 @@
 }
 else
 {
-    <table class="table">
+    <table class="table mb-4">
         <thead>
             <tr>
-                <th>Id</th>
+                <th></th>
                 <th>Title</th>
                 <th></th>
             </tr>
@@ -21,8 +27,10 @@ else
         @foreach (var category in categories)
         {
             <tr @onclick="@(async () => await CategoryClicked(category.Id))">
-                <td>@category.Id</td>
-                <td>@category.Title</td>
+                <th></th>
+                <td>
+                    @category.Title
+                </td>
                 <td class="text-center">
                     <button class="btn btn-dark"
                             @onclick="@(async () => await DeleteCategory(category.Id))"
@@ -36,7 +44,7 @@ else
             <tr id="addRow">
                 <td></td>
                 <td>
-                    <input @bind="newCategoryTitle" placeholder="New Category" />
+                    <input class="form-control w-50" @bind="newCategoryTitle" placeholder="New Category" />
                 </td>
                 <td class="text-center">
                     <button class="btn btn-secondary" @onclick="AddCategory">
@@ -59,14 +67,23 @@ else
     private List<Category> categories;
     private string? newCategoryTitle;
 
+    private List<long> searchResult = new List<long>();
+
     private long selectedProductId = 0;
 
     protected override async Task OnInitializedAsync()
     {
         await GetCategories();
     }
-    private async Task GetCategories() =>
+    private async Task GetCategories()
+    {
         categories = await Http.GetFromJsonAsync<List<Category>>(categoriesEndPoint);
+
+        if (searchResult.Count > 0)
+        {
+            categories.RemoveAll(x => !searchResult.Contains(x.Id));
+        }
+    }
 
     private async Task AddCategory()
     {
@@ -97,5 +114,11 @@ else
             await Task.Delay(1);
             selectedProductId = id;
         }
+    }
+
+    private async Task SearchCategories(List<long> result)
+    {
+        searchResult = result;
+        await GetCategories();
     }
 }
