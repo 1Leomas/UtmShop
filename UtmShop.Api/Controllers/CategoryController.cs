@@ -79,8 +79,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> FindCategory([FromQuery] string categoryName)
     {
         var result = await _mediator.Send(new FindCategoryRequest(categoryName));
-        if (!result.HasValue)
-            return NotFound();
+
         return Ok(result);
     }
 
@@ -88,10 +87,6 @@ public class CategoryController : ControllerBase
     [HttpPost("categories")]
     public async Task<IActionResult> Post([FromBody] CreateCategoryDto value)
     {
-        var searchResult = await _mediator.Send(new FindCategoryRequest(value.Title));
-        if (searchResult.HasValue)
-            return Conflict();
-
         var createdCategory = await _mediator.Send(new CreateCategoryRequest(value.Title));
         if (!createdCategory.status)
             return BadRequest();
