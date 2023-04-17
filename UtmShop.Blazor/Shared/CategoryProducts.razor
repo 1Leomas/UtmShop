@@ -2,6 +2,7 @@
 
 @if (category is not null)
 {
+
     <h3>@category.Title category products</h3>
 
     @if (products is null)
@@ -61,6 +62,9 @@
 
     private string newProductTitle;
     private string newProductPrice;
+    private string newCategoryName;
+
+    private bool renameCategory = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,16 +87,21 @@
     private async Task ClickAddProduct()
     {
 
+        decimal price;
+
         if (   !string.IsNullOrWhiteSpace(newProductTitle)
-            && !string.IsNullOrWhiteSpace(newProductPrice))
+            && decimal.TryParse(newProductPrice, out price))
         {
             var product = new Product
             {
                 Title = newProductTitle,
-                Price = decimal.Parse(newProductPrice)
+                Price = price
             };
 
             await Http.PostAsJsonAsync($"{categoryEndPoint}/{CategoryId}/products", product);
+
+            newProductTitle = string.Empty;
+            newProductPrice = string.Empty;
 
             await GetProducts();
         }
@@ -102,6 +111,11 @@
     {
         await Http.DeleteAsync($"{categoryEndPoint}/products/{id}");
         await GetProducts();
+    }
+
+    private void StartRenameCategory()
+    {
+        renameCategory = !renameCategory;
     }
 }
     

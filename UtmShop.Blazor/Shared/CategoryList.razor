@@ -5,7 +5,21 @@
         <h3>Categories</h3>
     </div>
     <div class="col">
-        <SearchCategory Search="SearchCategories"></SearchCategory>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input @bind="inputSearch" type="text" class="form-control" placeholder="Search...">
+                        <button @onclick="StartSearch" class="btn btn-secondary" type="button">
+                            Search
+                        </button>
+                        <button @onclick="Reset" class="btn btn-dark" type="button">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -26,12 +40,44 @@ else
         <tbody>
         @foreach (var category in categories)
         {
-            <tr @onclick="@(async () => await CategoryClicked(category.Id))">
-                <th></th>
-                <td>
-                    @category.Title
-                </td>
+            <tr>
+                <td></td>
+                @if (renameCategory != category.Id)
+                {
+                    <td @onclick="@(async () => await CategoryClicked(category.Id))">
+                        @category.Title
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <input class="form-control w-50 d-inline" @bind="categoryTitle" placeholder="New Category name" 
+                               @onclick:preventDefault="true"
+                               @onclick:stopPropagation="true"/>
+                        <button @onclick="@(() => RenameCategory())" class="btn btn-secondary me-2"
+                                @onclick:preventDefault="true"
+                                @onclick:stopPropagation="true">
+                            Confirm
+                        </button>
+                    </td>
+                }
                 <td class="text-center">
+                    @if (renameCategory != category.Id)
+                    {
+                        <button @onclick="@(() => StartRenameCategory(category.Id))" class="btn btn-secondary me-2"
+                                @onclick:preventDefault="true"
+                                @onclick:stopPropagation="true">
+                            Rename
+                        </button>
+                    }
+                    else
+                    {
+                        <button @onclick="@(() => StartRenameCategory(0))" class="btn btn-danger me-2"
+                                @onclick:preventDefault="true"
+                                @onclick:stopPropagation="true">
+                            Cancel
+                        </button>
+                    }
                     <button class="btn btn-dark"
                             @onclick="@(async () => await DeleteCategory(category.Id))"
                             @onclick:preventDefault="true"
@@ -67,19 +113,26 @@ else
     private List<Category> categories;
     private string? newCategoryTitle;
 
+    private const string searchEndPoint = "/api/Category/categories/search?categoryName=";
     private List<long> searchResult = new List<long>();
+    private bool startSearch = false;
+    private string? inputSearch = string.Empty;
 
     private long selectedProductId = 0;
+
+    private long renameCategory = 0;
+    private string categoryTitle;
 
     protected override async Task OnInitializedAsync()
     {
         await GetCategories();
     }
+
     private async Task GetCategories()
     {
         categories = await Http.GetFromJsonAsync<List<Category>>(categoriesEndPoint);
 
-        if (searchResult.Count > 0)
+        if (startSearch)
         {
             categories.RemoveAll(x => !searchResult.Contains(x.Id));
         }
@@ -116,9 +169,41 @@ else
         }
     }
 
-    private async Task SearchCategories(List<long> result)
+    private async Task StartSearch()
     {
-        searchResult = result;
+        searchResult = await Http.GetFromJsonAsync<List<long>?>($"{searchEndPoint}{inputSearch}");
+
+        Console.WriteLine(searchResult?.Count);
+        startSearch = true;
         await GetCategories();
     }
+
+    private async Task Reset()
+    {
+        inputSearch = string.Empty;
+        startSearch = false;
+        await GetCategories();
+    }
+
+    private void StartRenameCategory(long id)
+    {
+        renameCategory = id;
+        categoryTitle = string.Empty;
+    }
+
+    private async Task RenameCategory()
+    {
+        if (string.IsNullOrWhiteSpace(categoryTitle))
+            return;
+
+        Category renamedCategory = new Category
+        {
+            Title = categoryTitle
+        };
+
+        await Http.PutAsJsonAsync($"api/Category/{renameCategory}", renamedCategory);
+        StartRenameCategory(0);
+        await GetCategories();
+    }
+
 }
