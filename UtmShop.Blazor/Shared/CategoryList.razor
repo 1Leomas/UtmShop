@@ -171,9 +171,11 @@ else
 
     private async Task StartSearch()
     {
+        if (string.IsNullOrWhiteSpace(inputSearch))
+            return;
+
         searchResult = await Http.GetFromJsonAsync<List<long>?>($"{searchEndPoint}{inputSearch}");
 
-        Console.WriteLine(searchResult?.Count);
         startSearch = true;
         await GetCategories();
     }
