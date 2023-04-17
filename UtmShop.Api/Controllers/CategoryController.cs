@@ -97,9 +97,6 @@ public class CategoryController : ControllerBase
     [HttpPut("{id:long}")]
     public async Task<IActionResult> Put(long id, [FromBody] CreateCategoryDto value)
     {
-        var searchResult = await _mediator.Send(new FindCategoryRequest(value.Title));
-        if (searchResult != null)
-            return Conflict();
         var patchResult = await _mediator.Send(new ChangeCategoryTitleRequest(id, value.Title));
         if (patchResult == null)
             return BadRequest();
