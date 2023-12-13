@@ -7,7 +7,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var defaultUri = new Uri(builder.HostEnvironment.BaseAddress);
-var utmShopApiUri = new Uri("https://localhost:5001/");
+var utmShopApiUri = new Uri("https://utmshop.azurewebsites.net/");
 
 builder.Services.AddScoped(sp => new HttpClient
 {
